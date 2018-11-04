@@ -1,0 +1,139 @@
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <pthread.h> 
+
+typedef struct thread_struct {   ///   struct to pass parameter num1 and num2   to thread function 
+   int num1;
+   int num2;
+   int result;
+
+} thread_struct;
+
+void *myThread_function(void *arg)   /// thread function 
+{
+   thread_struct *s_object=(thread_struct *)arg;
+
+   int num1=s_object->num1;
+   int num2=s_object->num2;
+   int s =num1+num2;
+
+   s_object->result=s;
+   pthread_exit(NULL);
+}
+
+int main(){
+
+
+int c  ;
+int r  ;
+
+///take number of colum and row 
+   printf( "enter colum number  ");
+   scanf("%d", &c);
+   printf( "enter rows number  ");
+   scanf("%d", &r);
+
+   int arr1[c][r] ;
+   int arr2[c][r] ;
+   int sum[c][r] ;
+   
+   printf("\nenter value of first matrix\n") ;   ///  take value for first matrix
+   
+   for(int i = 0 ; i < c ; i++ )
+   {
+   		for(int j = 0 ; j < r ; j++ )
+   		{
+   			printf( "enter value  ( %d %s %d %s " , i , " , " ,  j  , " ) : " ) ;
+   		       scanf("%d", &arr1[i][j]);
+   		}
+   }
+   
+   printf("\nenter value of second matrix\n") ;     ///  take value for second matrix
+
+   for(int i = 0 ; i < c ; i++ )
+   {
+   		for(int j = 0 ; j < r ; j++ )
+   		{
+   			printf( "enter value  ( %d %s %d %s " , i , " , " ,  j  , " )  " ) ;
+   		       scanf("%d", &arr2[i][j]);
+   		}
+   }
+   
+  printf("\n\nfirst matrix \n") ;   ///  print first matrix
+   
+   for(int i = 0 ; i < c ; i++ )
+   {
+   		for(int j = 0 ; j < r ; j++ )
+   		{
+   			printf ("%d %s" , arr1[i][j]  , "\t" ) ;
+   		}
+   		printf("\n") ;
+   	
+   }
+   
+      		printf("\n\n") ;
+
+     printf("second matrix \n") ;     ///  print first matrix
+
+    for(int i = 0 ; i < c ; i++ )
+   {
+   		for(int j = 0 ; j < r ; j++ )
+   		{
+   			printf ("%d %s" , arr2[i][j]  , "\t" ) ;
+   		}
+   		printf("\n") ;
+   	
+   }
+   ////  make threads  and sum  
+    for(int i = 0 ; i < c ; i++ )
+   {
+   		for(int j = 0 ; j < r ; j++ )
+   		{
+   pthread_t   id;
+   thread_struct o ;  // object from struct 
+
+   o.num1= arr1[i][j] ;
+   o.num2=arr2[i][j];
+
+   pthread_create(&id, NULL, myThread_function, (void *)&o);
+   pthread_join(id, NULL);
+	
+	sum[i][j] = o.result ;
+    
+   		}
+   }
+    ///  make threads  and sum    by anther method
+   /* 
+    int num_of_thread = c * r ;                              //   number of thread  = num of colum *  num of rows 
+
+	for(int j = 0 ; j < num_of_thread ; j++ )
+   		{
+		   pthread_t   id;
+		   thread_struct o ;                              // object from struct 
+		
+		   o.num1= arr1[i][j] ;
+		   o.num2=arr2[i][j];
+		
+		   pthread_create(&id, NULL, myThread_function, (void *)&o);
+		   pthread_join(id, NULL);
+			
+			sum[i][j] = o.result ;
+		    
+   		}   
+   */
+   
+    printf("\n\n    sum matrix   \n\n" );   //// print sum matrix 
+    for(int i = 0 ; i < c ; i++ )
+   {
+   	
+	   	for(int j = 0 ; j < r ; j++ )
+   		{
+   			printf( "%d %s", sum[i][j]  ,  "\t"  );     
+   		}
+   	printf( "\n"  ) ;
+   }
+   
+   
+   
+   return 0 ;
+}
